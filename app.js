@@ -181,6 +181,112 @@ console.log(chosenItem);
 const numbers = ['919917700188@c.us', '919917713287@c.us', '919917753009@c.us', '919917826900@c.us', '919917859989@c.us', '919917956138@c.us', '919917961254@c.us', '919917964825@c.us', '919927017452@c.us', '919927022722@c.us', '919927028399@c.us', '919927159664@c.us', '919927165176@c.us', '919927191433@c.us', '919927246677@c.us', '919927255949@c.us', '919927258810@c.us', '919927270110@c.us', '919927276757@c.us', '919927312241@c.us', '919927354101@c.us', '919927360379@c.us', '919927389074@c.us', '919927409195@c.us', '919927420014@c.us', '919927440036@c.us', '919927475716@c.us', '919927605031@c.us', '919927615719@c.us', '919927643050@c.us', '919927673830@c.us', '919927707310@c.us', '919927736024@c.us', '919927738939@c.us', '919927789643@c.us', '919927807862@c.us', '919927815142@c.us', '919927817180@c.us', '919927837324@c.us', '919927867408@c.us', '919927875812@c.us', '919927932144@c.us', '919927938934@c.us','919012646805@c.us', '918433101557@c.us', '919068954545@c.us', '919440872124@c.us', '918057757258@c.us', '916398411848@c.us', '919368803205@c.us', '919917985846@c.us', '918869838223@c.us', '916209307434@c.us', '918400235352@c.us', '919917641510@c.us', '918279630507@c.us', '919643819266@c.us', '917500392721@c.us', '917248087582@c.us', '916397488650@c.us', '919690566443@c.us', '919917721555@c.us', '919917370949@c.us', '917217358654@c.us', '918384832022@c.us', '917668966232@c.us', '919568986889@c.us', '919457966952@c.us', '918279459593@c.us', '917817852460@c.us', '916396388624@c.us', '919758337117@c.us', '916396574702@c.us', '919520242032@c.us', '918279978341@c.us', '919897072926@c.us', '917017063929@c.us', '919368934063@c.us', '918057638804@c.us', '919897625971@c.us', '917248804754@c.us', '917248878458@c.us', '919780331322@c.us', '917540997210@c.us', '916399703386@c.us', '918958396105@c.us', '918979146956@c.us', '918218698503@c.us', '919870755774@c.us', '919045236255@c.us', '919761436370@c.us', '919536728766@c.us', '917505856223@c.us', '917310857758@c.us', '918433022589@c.us', '919639193172@c.us'];
 const numbers1 = ['918800931204@c.us']
 // Function to send messages manually
+
+// put these near top of file (customize messages & numbers)
+const MessagesPatterns = [
+    // ---- English casual ----
+    "Hey, what are you doing?",
+    "Did you have lunch?",
+    "Good morning! 🌞",
+    "Good night, sleep well 😴",
+    "Where are you now?",
+    "Call me when you’re free.",
+    "How’s work going?",
+    "Long time no see!",
+    "What’s up?",
+    "Are you coming today?",
+
+    // ---- Hindi casual ----
+    "Kya kar rahe ho?",
+    "Khana khaya tumne?",
+    "Subah subah good morning ☀️",
+    "Raat me ache se sona 😴",
+    "Abhi kahan ho?",
+    "Fursat mile to call karna.",
+    "Kaam kaisa chal raha hai?",
+    "Bahut dino baad baat ho rahi hai!",
+    "Kya haal hai?",
+    "Aaj aa rahe ho na?",
+
+    // ---- Hinglish casual ----
+    "Kya kar rahe ho yaar?",
+    "Lunch ho gaya kya?",
+    "GM dost 😎",
+    "GN buddy ✨",
+    "Abhi kahan busy ho?",
+    "Free ho to call karna.",
+    "Work kaisa chal raha hai?",
+    "Itna time ho gaya, milna chahiye ab!",
+    "WhatsApp pe active ho?",
+    "Aaj ka plan kya hai?",
+
+    // ---- More random realistic filler ----
+    "Ok 👍",
+    "Hmm",
+    "K",
+    "Accha",
+    "Arey wah 👌",
+    "Thik hai.",
+    "Jaldi milte hain.",
+    "Phir baat karte hain.",
+    "Sorry, thoda busy tha.",
+    "Kal baat karenge.",
+    "Bahut mast!",
+    "Sahi hai yaar.",
+    "Arre sach me?",
+    "Haha 😂",
+    "Lol 🤣",
+    "Seriously?",
+    "Tu pagal hai kya 😅",
+    "Mujhe bhi bata dena.",
+    "Chal thik hai.",
+    "Milte hain fir.",
+
+    // Emojis only
+    "😂😂😂",
+    "🤔🤔",
+    "😎🔥",
+    "❤️❤️",
+    "🙌🙌",
+    "😅😅",
+    "👌👌",
+    "👍👍",
+    "😭😭",
+    "🤣🤣",
+];
+
+
+// list of recipients to send random messages to (JID or plain number)
+const targetNumbers = [
+    '919220229776@c.us', '918800931204@c.us', '919871182401@c.us' ,'919667139363@c.us' // ...etc
+];
+
+// helpers
+function randInt(min, max) {
+    // inclusive min, inclusive max
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function pickRandom(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+function normalizeJid(raw) {
+    if (!raw) return null;
+    // if looks like JID already
+    if (raw.includes('@')) return raw;
+    // assume country code + number (no +)
+    return raw.replace(/^\+/, '') + '@c.us';
+}
+
+// safe send wrapped (logs errors)
+async function safeSend(jid, text) {
+    try {
+        await client.sendMessage(jid, text);
+        console.log(`✅ Sent to ${jid}: ${text}`);
+    } catch (err) {
+        console.error(`❌ Failed to send to ${jid}:`, err && err.message ? err.message : err);
+    }
+}
+
 console.log(numbers.length)
 async function sendMessages(message) {
     for (const number of numbers) {
@@ -208,16 +314,34 @@ client.on('message', async msg => {
     console.log(`📩 Message from ${msg.from}: ${msg.body}`);
 
     try {
-        if (msg.body) {
-    // Load local image
-    const media = MessageMedia.fromFilePath('sorry.png'); // your local image
+         if (!msg.body) return;
 
-    // Caption text
-    const caption = "Sorry Message Delivered to Wrong Number.\nWe apologize for that.\nWe will not message you anymore.\nThanks for connecting to your bot.\nBye 👋";
+        console.log(`📩 Incoming message from ${msg.from}: ${msg.body}`);
 
-    // Send image with caption
-    await client.sendMessage(msg.from, media, { caption: caption });
-}
+        // 1) Schedule reply to the sender after random delay 2 - 7 minutes
+        const replyDelaySeconds = randInt(120, 420); // 120s = 2min, 420s = 7min
+        const replyText = pickRandom(MessagesPatterns);
+        console.log(`⏲ Scheduling reply to ${msg.from} in ${replyDelaySeconds} seconds -> "${replyText}"`);
+
+        setTimeout(async () => {
+            // double-check msg.from exists
+            if (!msg.from) return;
+            await safeSend(msg.from, replyText);
+        }, replyDelaySeconds * 1000);
+
+        // 2) Schedule a random message to a random JID from targetNumbers after 5 - 15 minutes
+        if (Array.isArray(targetNumbers) && targetNumbers.length > 0) {
+            const targetRaw = pickRandom(targetNumbers);
+            const targetJid = normalizeJid(targetRaw);
+            const targetDelaySeconds = randInt(300, 900); // 300s = 5min, 900s = 15min
+            const targetText = pickRandom(MessagesPatterns);
+            console.log(`⏲ Scheduling outgoing to ${targetJid} in ${targetDelaySeconds} seconds -> "${targetText}"`);
+
+            setTimeout(async () => {
+                if (!targetJid) return;
+                await safeSend(targetJid, targetText);
+            }, targetDelaySeconds * 1000);
+        }
         // Trigger message sending manually by typing "send"
         if (msg.body.toLowerCase() === 'send') {
             await msg.reply('🚀 Sending messages now...');
